@@ -1,0 +1,8 @@
+numpy
+matplotlib
+pandas
+cartopy
+seaborn
+pygal
+beautifulsoup4
+requests
