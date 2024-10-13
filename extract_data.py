@@ -5,7 +5,6 @@ from datetime import datetime
 import os, sys
 
 DOMINIO = r"https://www.ign.es/web/ign/portal/sis-catalogo-terremotos/-/catalogo-terremotos/"
-URL_EXAMPLE = "https://www.ign.es/web/ign/portal/sis-catalogo-terremotos/-/catalogo-terremotos/searchTerremoto?latMin=26&latMax=45&longMin=-20&longMax=6&startDate=01/01/2024&endDate=12/10/2024&selIntensidad=N&selMagnitud=N&intMin=&intMax=&magMin=&magMax=&selProf=N&profMin=&profMax=&cond=&indice=50"
 
 def try_parsing_date(text):
     for fmt in ('%Y-%m-%d', '%d.%m.%Y', '%d/%m/%Y'):
@@ -125,27 +124,33 @@ def get_earthquakes(
         longMax: float,
         startDate: str,
         endDate: str,
-        intMin: float = '',
-        intMax: float = '',
-        magMin: float = '',
-        magMax: float = '',
-        profMin: float = '',
-        profMax: float = '',
+        intMin: float = -1,
+        intMax: float = -1,
+        magMin: float = -1,
+        magMax: float = -1,
+        profMin: float = -1,
+        profMax: float = -1,
         cond: str = ''    
 ):
 
-    if intMin == '' or intMax == '':
+    if intMin == -1 or intMax == -1:
         selIntensidad = 'N'
+        intMin = ''
+        intMax = ''
     else:
         selIntensidad = 'Y'
 
-    if magMin == '' or magMax == '':
+    if magMin == -1 or magMax == -1:
         selMagnitud = 'N'
+        magMin = ''
+        magMax = ''
     else:
         selMagnitud = 'Y'
 
-    if profMin == '' or profMax == '':
+    if profMin == -1 or profMax == -1:
         selProf = 'N'
+        profMin = ''
+        profMax = ''
     else:
         selProf = 'Y'
 
@@ -180,21 +185,23 @@ def get_earthquakes(
 
     for col in columnas_html:
         if col.string != None:
-            columnas.append(col.string)
+            columnas.append(str(col.string))
         if col.string == None and col.a == None:
-            columnas.append(col.contents[0])
+            columnas.append(str(col.contents[0]))
         if col.string == None and col.a != None:
-            columnas.append(col.a.contents[0])
+            columnas.append(str(col.a.contents[0]))
 
     df = pd.DataFrame(
-        columns=columnas
+        columns=columnas,
     )
+    df = df.drop('Más Info', axis=1)
+    columnas.pop(-1)
 
     index = 0
     for fila in filas[1:]:
         datos = fila.find_all('td')
         for dato, col in zip(datos, columnas):
-            df.loc[index, col] = dato.string
+            df.loc[index, col] = str(dato.string)
         index += 1
 
     indice += 50
@@ -209,7 +216,8 @@ def get_earthquakes(
         for fila in filas[1:]:
             datos = fila.find_all('td')
             for dato, col in zip(datos, columnas):
-                df.loc[index, col] = dato.string
+                if dato.string is not None:
+                    df.loc[index, col] = str(dato.string)
             index += 1
     
         indice += 50
@@ -219,17 +227,25 @@ def get_earthquakes(
         contenido = bs.BeautifulSoup(respuesta.content, 'html.parser')
         tabla = contenido.find('table', class_=None)
     
+    num_cols = ['Latitud', 'Longitud', 'Profundidad', 'Magnitud', 'Int. max.']
+    df = df.astype(dict(zip(num_cols, 5*['float'])))
+    df = df.astype({"Fecha": 'str', "Hora UTC": 'str', "Hora Local": 'str', "Tipo Mag.": 'str', "Localización": 'str'})
+    df.Fecha = pd.to_datetime(df.Fecha, format="%d/%m/%Y")
+    df['Hora UTC'] = pd.to_datetime(df['Hora UTC'], format="%H:%M:%S")
+    df['Hora Local'] = pd.to_datetime(df['Hora Local'], format="%H:%M:%S")
+    #print(URL)
     return df
 
 
-df = get_earthquakes(
-    latMin=26,
-    latMax=45,
-    longMin=-20,
-    longMax=6,
-    startDate="01/01/2024",
-    endDate="12/10/2024",
-    intMin=1,
-    intMax=3
-)
+if __name__ == "__main__":
+    df = get_earthquakes(
+        latMin=26,
+        latMax=45,
+        longMin=-20,
+        longMax=6,
+        startDate="01/01/2024",
+        endDate="12/10/2024",
+        intMin=1,
+        intMax=3
+    )
 
