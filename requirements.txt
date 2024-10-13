@@ -6,3 +6,5 @@ seaborn
 pygal
 beautifulsoup4
 requests
+statsmodels
+scipy

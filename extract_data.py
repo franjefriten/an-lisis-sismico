@@ -233,6 +233,7 @@ def get_earthquakes(
     df.Fecha = pd.to_datetime(df.Fecha, format="%d/%m/%Y")
     df['Hora UTC'] = pd.to_datetime(df['Hora UTC'], format="%H:%M:%S")
     df['Hora Local'] = pd.to_datetime(df['Hora Local'], format="%H:%M:%S")
+    df['Year'] = df['Fecha'].dt.year
     #print(URL)
     return df
 
