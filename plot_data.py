@@ -42,16 +42,22 @@ class Marco():
             profMax,
             cond,
         )
+      self.latMin = latMin
+      self.latMax = latMax
+      self.longMin = longMin
+      self.longMax = longMax
+      self.startDate = startDate
+      self.endDate = endDate
+    
+    def save_to_csv(self):
+      self.df.to_csv(
+        f"./data/dataset_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}"
+        )
 
     def plot_map(self, fronteras=False, rios=False, oceanos=False):
        
       norma_color = Normalize(vmin=self.df.Magnitud.min(), vmax=self.df.Magnitud.max())
       norma_tamanno = Normalize(vmin=self.df.Profundidad.min(), vmax=self.df.Profundidad.max())
-
-      print("Magnitud max", self.df.Magnitud.max(), "Tipo", self.df.Magnitud.dtype)
-      print("Magnitud min", self.df.Magnitud.min())
-      print("Profundidad max", self.df.Profundidad.max(), "Tipo", self.df.Profundidad.dtype)
-      print("Profundidad min", self.df.Profundidad.min())
       
       fig = plt.figure(figsize=(10, 10))
       ax = plt.axes(projection=ccrs.PlateCarree())
@@ -72,7 +78,8 @@ class Marco():
                       size='Profundidad', hue_norm=norma_color, size_norm=norma_tamanno, sizes=(1, 50), ax=ax)
       
       ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), fancybox=True)
-     
+
+      fig.savefig(r".\img")
       plt.show()
 
 marco = Marco(
@@ -89,3 +96,4 @@ marco = Marco(
 )
 
 marco.plot_map(fronteras=True, oceanos=True, rios=True)
+marco.save_to_csv()
