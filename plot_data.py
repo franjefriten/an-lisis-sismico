@@ -50,11 +50,6 @@ class Marco():
       self.longMax = longMax
       self.startDate = startDate
       self.endDate = endDate
-    
-    def save_to_csv(self):
-      self.df.to_csv(
-        f"./data/dataset_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}"
-        )
 
     def plot_map(self, fronteras=False, rios=False, oceanos=False):
        
@@ -149,6 +144,50 @@ class Marco():
 
       fig.tight_layout(rect=(0, 0, 1, 0.98))
       fig.savefig(f"./img/full_analysis_map_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
+      plt.show()
+    
+    def plot_int_time(self):
+
+      fig, ax = plt.subplots()
+      self.df.plot.bar(x='Fecha', y='Int. max.', ax=ax)
+      ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+      ax.set_xlabel("Fecha")
+      ax.set_ylabel("Intensidad Máxima")
+      fig.suptitle("Intensidad máxima de los terremotos registrados respecto del tiempo")
+      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.savefig(f"./img/int_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
+      plt.show()
+
+    def plot_int_distribution(self):
+
+      fig, ax = plt.subplots()
+      self.df.plot.hist(by='Int. max.', bins=15, ax=ax)
+      ax.set_ylabel("Intensidad Máxima")
+      fig.suptitle("Distribución de la intensidad máxima de los terremotos registrados respecto del tiempo")
+      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.savefig(f"./img/int_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
+      plt.show()
+
+    def plot_int_time(self):
+
+      fig, ax = plt.subplots()
+      self.df.plot.bar(x='Fecha', y='Magnitud', ax=ax)
+      ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+      ax.set_xlabel("Fecha")
+      ax.set_ylabel("Magnitud Máxima")
+      fig.suptitle("Magnitud máxima de los terremotos registrados respecto del tiempo")
+      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
+      plt.show()
+
+    def plot_int_distribution(self):
+
+      fig, ax = plt.subplots()
+      self.df.plot.hist(by='Magnitud', bins=15, ax=ax)
+      ax.set_ylabel("Magnitud")
+      fig.suptitle("Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo")
+      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
       plt.show()
 
 marco = Marco(
