@@ -62,20 +62,16 @@ def FromClass(fname: str, cls, *args, **kwargs):
     with doc.create(Section("Análisis Mapa")):
 
         with doc.create(Figure(position="H")) as plot_map_eq:
-            pass
-            #plot.add_image(cls.)
+            cls.plot_map_data()
 
         with doc.create(Figure(position="H")) as plot_map_fullanal:
-            pass
-            #plot.add_image(cls.)
+            cls.plot_full_map_analysis()
 
         with doc.create(Figure(position="H")) as plot_mag_distr:
-            pass
-            #plot.add_image(cls.)
+            cls.plot_mag_distribution()
 
         with doc.create(Figure(position="H")) as plot_mag_distr_rit:
-            pass
-            #plot.add_image(cls.)
+            cls.plot_mag_distribution_ritcher_law()
 
         doc.append("Created using matplotlib.")
 
@@ -138,20 +134,16 @@ def FromLocal(fname: str, df: DataFrame, imgs: dict, *args, **kwargs):
     with doc.create(Section("Análisis Mapa")):
 
         with doc.create(Figure(position="H")) as plot_map_eq:
-            pass
-            #plot.add_image(cls.)
+            imgs['plot_map_data']
 
         with doc.create(Figure(position="H")) as plot_map_fullanal:
-            pass
-            #plot.add_image(cls.)
+            imgs['plot_full_map_analysis']
 
         with doc.create(Figure(position="H")) as plot_mag_distr:
-            pass
-            #plot.add_image(cls.)
+            imgs['plot_mag_distribution']
 
         with doc.create(Figure(position="H")) as plot_mag_distr_rit:
-            pass
-            #plot.add_image(cls.)
+            imgs['plot_mag_distribution_ritcher_law']
 
         doc.append("Created using matplotlib.")
 
