@@ -42,7 +42,7 @@ plot_map <- function(path_to_csv, path_to_store, width, height) {
   )
   fig <- fig %>% colorbar(title = "Magnitud de terremotos<br />")
   fig <- fig %>% layout(
-    title = "Mapa de terremotos",
+    title = "Mapa de terremotos CC-BY 4.0 ign.es 2024",
     geo = g,
     autosize = FALSE,
     yaxis = yaxis
@@ -59,7 +59,7 @@ plot_map <- function(path_to_csv, path_to_store, width, height) {
   htmltools::save_html(
     as_widget(fig),
     path
-    )
+  )
 }
 
 

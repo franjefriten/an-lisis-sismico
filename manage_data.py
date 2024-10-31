@@ -1,3 +1,5 @@
+## OBRA DERIVADA DE Catalogo de Terremotos 2024 CC- BY 4.0 ign.es
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
@@ -109,7 +111,8 @@ class Marco():
       if oceanos == True:
         ax.add_feature(cf.OCEAN)
       ax.set_extent([self.df.Longitud.min()-5, self.df.Longitud.max()+5, self.df.Latitud.min()-5, self.df.Latitud.max()+5])
-      ax.set_title('Terremotos en {}/{} ºN y {}/{} ºE'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
+      fig.suptitle('Terremotos en {}/{} ºN y {}/{} ºE'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       ax.set_xlabel('Longitud')
       ax.set_ylabel('Latitud')
 
@@ -141,7 +144,8 @@ class Marco():
       if oceanos == True:
         ax.add_feature(cf.OCEAN)
       ax.set_extent([self.df.Longitud.min()-5, self.df.Longitud.max()+5, self.df.Latitud.min()-5, self.df.Latitud.max()+5])
-      ax.set_title('Terremotos en {}/{} ºN y {}/{} ºE'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
+      fig.suptitle('Terremotos en {}/{} ºN y {}/{} ºE'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
+      ax.set_title('CC-BY 4.0 ign.es 2024')
       ax.set_xlabel('Longitud')
       ax.set_ylabel('Latitud')
 
@@ -179,6 +183,7 @@ class Marco():
       fig.suptitle("Análisis sísmico {}/{} ºN y {}/{} ºE".format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()),
                    fontdict=font,
                    fontsize=14)
+      
       gs = fig.add_gridspec(3,3)
       ax_map = fig.add_subplot(gs[:2, :2], projection=ccrs.PlateCarree())
       ax_depth = fig.add_subplot(gs[2, :2])
@@ -186,6 +191,7 @@ class Marco():
       ax_scat = fig.add_subplot(gs[2, 2])
 
       ax_map.add_feature(cf.COASTLINE)
+      ax_map.set_title('CC-BY 4.0 ign.es 2024')
       ax_map.add_feature(cf.LAND)
       ax_map.set_extent([self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()])
 
@@ -242,8 +248,8 @@ class Marco():
       ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
       ax.set_xlabel("Fecha")
       ax.set_ylabel("Intensidad Máxima")
-      fig.suptitle("Intensidad máxima de los terremotos registrados respecto del tiempo")
-      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.suptitle(f"Intensidad máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       if savefig == True:
         fig.savefig(f"./img/int_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
       if showfig == True:
@@ -260,8 +266,8 @@ class Marco():
       self.df.plot.hist(by='Int. max.', bins=15, ax=ax)
       ax.set_xlabel("Intensidad Máxima")
       ax.set_xticks(np.arange(self.df.Intesidad.min(), self.df.Intensidad.max()+1, 0.5))
-      fig.suptitle("Distribución de la intensidad máxima de los terremotos registrados respecto del tiempo")
-      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.suptitle(f"Distribución de la intensidad máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       if savefig == True:
         fig.savefig(f"./img/int_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
       if showfig == True:
@@ -279,8 +285,8 @@ class Marco():
       ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
       ax.set_xlabel("Fecha")
       ax.set_ylabel("Magnitud Máxima")
-      fig.suptitle("Magnitud máxima de los terremotos registrados respecto del tiempo")
-      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.suptitle(f"Magnitud máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       if savefig == True:
         fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
       if showfig == True:
@@ -296,8 +302,8 @@ class Marco():
       fig, ax = plt.subplots()
       self.df.Magnitud.plot.hist(bins=15, ax=ax)
       ax.set_xlabel("Magnitud")
-      fig.suptitle("Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo")
-      ax.set_xticks(np.arange(self.df.Magnitud.min(), self.df.Magnitud.max()+1, 0.5))
+      fig.suptitle(f"Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
       if savefig == True:
         fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
@@ -327,9 +333,8 @@ class Marco():
       )
       ax.legend()
       ax.set_xlabel("Magnitud")
-      fig.suptitle("Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo")
-      ax.set_xticks(np.arange(self.df.Magnitud.min(), self.df.Magnitud.max()+1, 0.5))
-      ax.set_title(f"{self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.suptitle(f"Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      ax.set_title("CC-BY 4.0 ign.es 2024")
       if savefig == True:
         fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
       if showfig == True:
@@ -373,8 +378,8 @@ class Marco():
       if showfig == True:
         plt.show()        
 
-marco = Marco(
-  path_to_file=r"data\dataset_2024-10-16__21_17_22-633699"
+#marco = Marco(
+#  path_to_file=r"data\dataset_2024-10-16__21_17_22-633699"
 #  latMin=26,
 #  latMax=45,
 #  longMin=-20,
@@ -385,11 +390,11 @@ marco = Marco(
 #  intMax=8,
 #  profMin=1,
 #  profMax=100
-)
+#)
 
 #marco.plot_map(fronteras=True, oceanos=True, rios=True)
 #marco.plot_full_map_analysis()
-marco.save_to_csv()
-marco.plot_mag_distribution_ritcher_law(showfig=True)
+#marco.save_to_csv()
+#marco.plot_mag_distribution_ritcher_law(showfig=True)
 #marco.poisson_analysis(showfig=True)
 #marco.save_to_excel()
