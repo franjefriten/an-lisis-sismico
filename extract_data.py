@@ -2,7 +2,15 @@ import requests
 import bs4 as bs
 import pandas as pd
 from datetime import datetime
-import os, sys
+import os, sys, time
+from selenium.webdriver import Firefox
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver import ActionChains
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 
 DOMINIO = r"https://www.ign.es/web/ign/portal/sis-catalogo-terremotos/-/catalogo-terremotos/"
 
@@ -237,9 +245,101 @@ def get_earthquakes(
     #print(URL)
     return df
 
+def download_earthquakes(
+        latMin: float,
+        latMax: float,
+        longMin: float,
+        longMax: float,
+        startDate: str,
+        endDate: str,
+        intMin: float = -1,
+        intMax: float = -1,
+        magMin: float = -1,
+        magMax: float = -1,
+        profMin: float = -1,
+        profMax: float = -1,
+        cond: str = '' ,
+        webdriver: str = 'Firefox',
+        folder_to_download: str = ''   
+):
+
+    if intMin == -1 or intMax == -1:
+        selIntensidad = 'N'
+        intMin = ''
+        intMax = ''
+    else:
+        selIntensidad = 'Y'
+
+    if magMin == -1 or magMax == -1:
+        selMagnitud = 'N'
+        magMin = ''
+        magMax = ''
+    else:
+        selMagnitud = 'Y'
+
+    if profMin == -1 or profMax == -1:
+        selProf = 'N'
+        profMin = ''
+        profMax = ''
+    else:
+        selProf = 'Y'
+
+    indice = 50
+
+    query = "searchTerremoto?"
+    query = ''.join([query, 'latMin=', str(latMin), '&'])
+    query = ''.join([query, 'latMax=', str(latMax), '&'])
+    query = ''.join([query, 'longMin=', str(longMin), '&'])
+    query = ''.join([query, 'longMax=', str(longMax), '&'])
+    query = ''.join([query, 'startDate=', startDate, '&'])
+    query = ''.join([query, 'endDate=', endDate, '&'])
+    query = ''.join([query, 'selIntensidad=', selIntensidad, '&'])
+    query = ''.join([query, 'selMagnitud=', selMagnitud, '&'])
+    query = ''.join([query, 'intMin=', str(intMin), '&'])
+    query = ''.join([query, 'intMax=', str(intMax), '&'])
+    query = ''.join([query, 'magMin=', str(magMin), '&'])
+    query = ''.join([query, 'magMax=', str(magMax), '&'])
+    query = ''.join([query, 'selProf=', selProf, '&'])
+    query = ''.join([query, 'profMin=', str(profMin), '&'])
+    query = ''.join([query, 'profMax=', str(profMax), '&'])
+    query = ''.join([query, 'cond=', cond, '&'])    
+    query_index = ''.join([query, 'indice=', str(indice)])
+    URL = os.path.join(DOMINIO, query_index)
+
+    if webdriver == 'Firefox':
+        opts = Options()
+        opts.set_preference("browser.download.folderList", 2)
+        opts.set_preference("browser.download.dir", folder_to_download)
+        #opts.set_preference("browser.download.downloadDir", ".\\data")
+        #opts.set_preference("browser.download.defaultFolder", ".\\data")
+        opts.set_preference('browser.helperApps.neverAsk.saveToDisk', 'application/octet-stream,application/pdf')
+        opts.set_preference('browser.download.manager.showWhenStarting', False)
+        opts.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
+        opts.add_argument("--headless")
+        opts.add_argument('--disable-notifications')
+        driver = Firefox(options=opts, keep_alive=True)
+        wait = WebDriverWait(driver=driver, timeout=10)
+    
+    elif webdriver == 'Chromium':
+        pass
+    
+    try:
+        driver.get(url=URL)
+    except NameError:
+        print("Error, Chromium aun no implementado")
+    else:
+        wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[@id='_IGNSISCatalogoTerremotos_WAR_IGNSISCatalogoTerremotosportlet_btnUploadFile']")),
+            message="Elemento no encontrado para clicar"
+        ).click()
+    finally:
+        time.sleep(60)
+        driver.quit()
+    
+    
 
 if __name__ == "__main__":
-    df = get_earthquakes(
+    df = download_earthquakes(
         latMin=26,
         latMax=45,
         longMin=-20,
@@ -247,6 +347,7 @@ if __name__ == "__main__":
         startDate="01/01/2024",
         endDate="12/10/2024",
         intMin=1,
-        intMax=3
+        intMax=3,
+        folder_to_download=r"C:\Users\kikof\Desktop\Copia Proyecto\data"
     )
 

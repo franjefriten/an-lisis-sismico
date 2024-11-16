@@ -58,8 +58,16 @@ class Marco():
         self.df = pd.read_excel(io=self.path, sheet_name="Hoja1")
 
       elif pathlib.Path(self.path).suffix == '.csv':
-        self.df = pd.read_csv(filepath_or_buffer=self.path)
-      
+        self.df = pd.read_csv(filepath_or_buffer=self.path, header=0, sep=';', skipinitialspace=True)
+        self.df.rename({'Inten.': 'Intensidad',
+                        'Mag.': 'Magnitud',
+                        'Prof. (Km)': 'Profundidad'}, axis=1, inplace=True)
+        self.df = self.df.astype({"Fecha": 'str', "Hora": 'str', "Tipo Mag.": 'str'})
+        self.df.Fecha = pd.to_datetime(self.df.Fecha, format="%d/%m/%Y")
+        self.df['Hora'] = pd.to_datetime(self.df['Hora'], format="%H:%M:%S")
+        self.df['Year'] = self.df['Fecha'].dt.year
+
+
       elif pathlib.Path(self.path).suffix == '.sqlite':
         pass
 
@@ -78,18 +86,6 @@ class Marco():
       self.magMax = magMax
       self.cond = cond
       
-    
-    def save_to_csv(self):
-      self.df.to_csv(
-        f"./data/dataset_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}"
-        )
-    
-
-    def save_to_excel(self):
-      self.df.to_excel(
-        excel_writer=f"./data/dataset_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}.xlsx",
-        sheet_name="Hoja1"
-      )
 
     def plot_map(
         self,
@@ -111,8 +107,7 @@ class Marco():
       if oceanos == True:
         ax.add_feature(cf.OCEAN)
       ax.set_extent([self.df.Longitud.min()-5, self.df.Longitud.max()+5, self.df.Latitud.min()-5, self.df.Latitud.max()+5])
-      fig.suptitle('Terremotos en {}/{} ºN y {}/{} ºE'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
-      ax.set_title("CC-BY 4.0 ign.es 2024")
+      fig.suptitle('Mapa en {}/{} ºN y {}/{} ºE | CC-BY 4.0 ign.es 2024'.format(self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()))
       ax.set_xlabel('Longitud')
       ax.set_ylabel('Latitud')
 
@@ -193,7 +188,7 @@ class Marco():
       ax_map.add_feature(cf.COASTLINE)
       ax_map.set_title('CC-BY 4.0 ign.es 2024')
       ax_map.add_feature(cf.LAND)
-      ax_map.set_extent([self.df.Longitud.min(), self.df.Longitud.max(), self.df.Latitud.min(), self.df.Latitud.max()])
+      ax_map.set_extent([self.df.Longitud.min()-5, self.df.Longitud.max()+5, self.df.Latitud.min()-5, self.df.Latitud.max()+5])
 
       gl = ax_map.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
                         linewidth=2, color='gray', alpha=0.5, linestyle='--')
@@ -207,6 +202,7 @@ class Marco():
       sns.scatterplot(x='Longitud', y='Latitud', data=self.df, hue='Magnitud', palette='hot_r',
                       alpha=0.8, transform=ccrs.PlateCarree(),
                       size='Profundidad', hue_norm=norma_color, size_norm=norma_tamanno, sizes=(1, 50), ax=ax_map, legend="brief")
+      sns.move_legend(ax_map, "upper right", bbox_to_anchor=(0, 1))
 
       sns.histplot(y='Magnitud',
                    data=self.df,
@@ -333,7 +329,7 @@ class Marco():
       )
       ax.legend()
       ax.set_xlabel("Magnitud")
-      fig.suptitle(f"Distribución de la magnitud máxima de los terremotos registrados respecto del tiempo {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
+      fig.suptitle(f"Distribución Ley de Richter {self.df.Latitud.min()}/{self.df.Latitud.max()}ºN-{self.df.Longitud.min()}/{self.df.Longitud.max()}ºW")
       ax.set_title("CC-BY 4.0 ign.es 2024")
       if savefig == True:
         fig.savefig(f"./img/mag_timeseries_{str(datetime.datetime.now()).replace(":", "_").replace(".", "-").replace(" ", "__")}")
@@ -378,23 +374,23 @@ class Marco():
       if showfig == True:
         plt.show()        
 
-#marco = Marco(
-#  path_to_file=r"data\dataset_2024-10-16__21_17_22-633699"
-#  latMin=26,
-#  latMax=45,
-#  longMin=-20,
-#  longMax=6,
-#  startDate="01/06/2023",
-#  endDate="12/10/2024",
-#  intMin=1,
-#  intMax=8,
-#  profMin=1,
-#  profMax=100
-#)
+if __name__ == "__main__":
+  marco = Marco(
+    path_to_file=r"data\catalogoComunSV_1731779591644.csv",
+    latMin=26,
+    latMax=45,
+    longMin=-20,
+    longMax=6,
+    startDate="01/06/2023",
+    endDate="12/10/2024",
+    intMin=1,
+    intMax=8,
+    profMin=1,
+    profMax=100
+  )
 
-#marco.plot_map(fronteras=True, oceanos=True, rios=True)
-#marco.plot_full_map_analysis()
-#marco.save_to_csv()
-#marco.plot_mag_distribution_ritcher_law(showfig=True)
-#marco.poisson_analysis(showfig=True)
-#marco.save_to_excel()
+  marco.plot_map(fronteras=True, oceanos=True, rios=True, savefig=True)
+  marco.plot_map_data(fronteras=True, oceanos=True, savefig=True)
+  marco.plot_mag_time(savefig=True)
+  marco.plot_full_map_analysis(savefig=True)
+  marco.plot_mag_distribution_ritcher_law(savefig=True)
