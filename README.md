@@ -55,3 +55,5 @@ El marco es el funcionamiento básico. Permite la carga de datasets locales o la
 ### AVISO
 
 Este software emplea los servicios de Catálogo de Terremotos del Institudo Geográfico Nacional (IGN) en ign.es. Todo se encuentra programado conforme a la normativa específicada en su página web (https://www.ign.es/web/ign/portal/politica-datos) y se encuentra bajo licencia CC-BY 4.0.
+
+El objetivo de este trabajo es méramente educativo y con motivos de investigación
